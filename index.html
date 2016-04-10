@@ -6,25 +6,51 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script>
         $(function() {
-
-            var messages;
-
+            var nameDateMap = {}
+      
             function run(html) {
-                var nameCount = {};
 
                 var elements = $.parseHTML(html);
 
-                console.log($(elements).find(".thread"));
+                $(elements).find(".thread").each(function(i, e) {
+                    var messageName;
+                    var messageDate;
 
-                messages = $(elements).find(".message_header");
-                messages.each(function(i, e) {
-                    var children = $(e).children();
-                    var name = $(children[0]).text();
-                    if (!nameCount[name])
-                        nameCount[name] = 1;
-                    else
-                        nameCount[name]++;
+                    $(e).children().each(function(ind, elem) {
+                        var current = $(elem); 
+
+                        if (ind % 2 === 0) {
+                            // meta
+                            var children = $(current.children()[0]).children();
+                            messageName = $(children[0]).text();
+                            var dateText = $(children[1]).text();
+                            var parsedDate = parseDate(dateText);
+                            messageDate = new Date(parsedDate);
+                        } else {
+                            // message
+                            var messageText = current.text();
+
+                            if (!nameDateMap[messageName]) {
+                                nameDateMap[messageName] = {};
+                            }
+                                                                                                             
+                            if (!nameDateMap[messageName][messageDate]) {                                   
+                                nameDateMap[messageName][messageDate] = [];                                 
+                            }
+                                                                                                             
+                            nameDateMap[messageName][messageDate].push(messageText);
+                        }
+                    })
                 });
+                
+                var nameCount = {};
+
+                for (name in nameDateMap) {
+                    for (nameDate in nameDateMap[name]) {
+                        if (!nameCount[name]) nameCount[name] = 0;
+                        nameCount[name] += nameDateMap[name][nameDate].length;
+                    }
+                }
 
                 var names = Object.keys(nameCount).sort(function(a, b) {
                     return nameCount[b] - nameCount[a];  
@@ -48,31 +74,24 @@
             }
 
             $("#name").on("change", function(e) {
-                var dates = {}
-                var current = $("#name").val();
-
-                messages.each(function(i, e) {
-                    var children = $(e).children();
-                    var name = $(children[0]).text();
-                    if (name === current) {
-                        var messageDate = $(children[1]).text();
-                        var parsedDate = parseDate(messageDate);
-                        var dateObj = new Date(parsedDate);
-                        dates[dateObj] = true
-                    }
-                });
+                var name = $("#name").val();
 
                 $("#datepicker").datepicker("destroy");
+                $("#messages").html("");
 
                 $("#datepicker").datepicker({
                     beforeShowDay: function(date) {
-                        if (dates[date])
+                        if (nameDateMap[name][date])
                             return [true, 'event', ''];
                         else
                             return [true, '', ''];
                     },
                     onSelect: function(dateText, inst) {
-                        
+                        $("#messages").html("");
+                        var messages = nameDateMap[name][new Date(dateText)];
+                        messages.reverse().forEach(function(message) {
+                            $("#messages").append($("<p>" + message + "</p>")); 
+                        });
                     }
                 });
             });
@@ -92,6 +111,7 @@
 
     <div><select id="name"></select>
     <div id="datepicker"></div>
+    <div id="messages"></div>
 </body>
 
 </html>
