@@ -1,0 +1,97 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script>
+        $(function() {
+
+            var messages;
+
+            function run(html) {
+                var nameCount = {};
+
+                var elements = $.parseHTML(html);
+
+                console.log($(elements).find(".thread"));
+
+                messages = $(elements).find(".message_header");
+                messages.each(function(i, e) {
+                    var children = $(e).children();
+                    var name = $(children[0]).text();
+                    if (!nameCount[name])
+                        nameCount[name] = 1;
+                    else
+                        nameCount[name]++;
+                });
+
+                var names = Object.keys(nameCount).sort(function(a, b) {
+                    return nameCount[b] - nameCount[a];  
+                });
+
+                $.each(names, function(a, b) {
+                    $("#name").append($("<option/>").attr("value", b).text(b +
+                                " (" + nameCount[b] + ")"));
+                });
+            }
+
+            $.get("messages.htm", function(html) {
+                run(html);
+            });
+
+            function parseDate(messageDate) {
+                var splitDate = messageDate.split(",");
+                var year = splitDate[2].substring(0, 5);
+                var parsed = splitDate[1].substring(1, splitDate[1].length) + "," + year;
+                return parsed;
+            }
+
+            $("#name").on("change", function(e) {
+                var dates = {}
+                var current = $("#name").val();
+
+                messages.each(function(i, e) {
+                    var children = $(e).children();
+                    var name = $(children[0]).text();
+                    if (name === current) {
+                        var messageDate = $(children[1]).text();
+                        var parsedDate = parseDate(messageDate);
+                        var dateObj = new Date(parsedDate);
+                        dates[dateObj] = true
+                    }
+                });
+
+                $("#datepicker").datepicker("destroy");
+
+                $("#datepicker").datepicker({
+                    beforeShowDay: function(date) {
+                        if (dates[date])
+                            return [true, 'event', ''];
+                        else
+                            return [true, '', ''];
+                    },
+                    onSelect: function(dateText, inst) {
+                        
+                    }
+                });
+            });
+
+        });
+    </script>
+    <style>
+        .event a {
+            background-color: #42B373 !important;
+            background-image :none !important;
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div><select id="name"></select>
+    <div id="datepicker"></div>
+</body>
+
+</html>
