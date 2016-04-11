@@ -112,7 +112,7 @@
                     onSelect: function(dateText, inst) {
                         $("#messages").html("");
                         var messages = nameDateMap[name][new Date(dateText)];
-                        messages.reverse().forEach(function(message) {
+                        messages.slice().reverse().forEach(function(message) {
                             $("#messages").append($("<tr><td>" + name + "</td><td>" + message + "</td></tr>")); 
                         });
                     }
