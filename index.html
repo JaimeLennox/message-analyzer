@@ -12,10 +12,10 @@
     <title>Message Analyzer</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="public/stylesheets/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="css/jumbotron-narrow.css" rel="stylesheet">
+    <link href="public/stylesheets/jumbotron-narrow.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
         <script>
         $(function() {
             var nameDateMap = {}
-      
+
             function run(html) {
 
                 var elements = $.parseHTML(html);
@@ -40,7 +40,7 @@
                     var messageDate;
 
                     $(e).children().each(function(ind, elem) {
-                        var current = $(elem); 
+                        var current = $(elem);
 
                         if (ind % 2 === 0) {
                             // meta
@@ -56,16 +56,16 @@
                             if (!nameDateMap[messageName]) {
                                 nameDateMap[messageName] = {};
                             }
-                                                                                                             
-                            if (!nameDateMap[messageName][messageDate]) {                                   
-                                nameDateMap[messageName][messageDate] = [];                                 
+
+                            if (!nameDateMap[messageName][messageDate]) {
+                                nameDateMap[messageName][messageDate] = [];
                             }
-                                                                                                             
+
                             nameDateMap[messageName][messageDate].push(messageText);
                         }
                     })
                 });
-                
+
                 var nameCount = {};
 
                 for (name in nameDateMap) {
@@ -76,7 +76,7 @@
                 }
 
                 var names = Object.keys(nameCount).sort(function(a, b) {
-                    return nameCount[b] - nameCount[a];  
+                    return nameCount[b] - nameCount[a];
                 });
 
                 $.each(names, function(a, b) {
@@ -113,7 +113,7 @@
                         $("#messages").html("");
                         var messages = nameDateMap[name][new Date(dateText)];
                         messages.slice().reverse().forEach(function(message) {
-                            $("#messages").append($("<tr><td>" + name + "</td><td>" + message + "</td></tr>")); 
+                            $("#messages").append($("<tr><td>" + name + "</td><td>" + message + "</td></tr>"));
                         });
                     }
                 });
@@ -145,21 +145,21 @@
             <h1>Message Analyzer</h1>
             <br />
             <p><a class="btn btn-lg btn-success" href="#" role="button">Browse</a></p>
-        
+
         </div>
-        
-        <div class="center row">     
+
+        <div class="center row">
             <div class="col-lg-12">
                 <div>
                     <select id="name"></select>
                 </div>
-                
+
                 <br />
-                
+
                 <div id="datepicker-center">
                     <div id="datepicker"></div>
                 </div>
-                
+
                 <table class="table" id="messages"></table>
             </div>
         </div>
