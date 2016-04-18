@@ -35,7 +35,19 @@
         .center {
             text-align: center;
         }
+
+        input[type="file"] {
+            display: none;
+        }
     </style>
+
+    <script>
+        $(function() {
+            $('#fileinput').change(function() {
+                $('#messages_form').submit();
+            });
+        });
+    </script>
 </head>
 
 <body>
@@ -46,9 +58,10 @@
         <h1>Message Analyzer</h1>
         <br />
         <div class="center">
-            <form enctype="multipart/form-data" action="/analyzer" method="post">
-                <input class="btn btn-lg btn-success" type="file" name="html">
-                <input type="submit">
+            <p><label for="fileinput" class="btn btn-lg btn-success" role="button">Select your 'messages.htm'!</label></p>
+
+            <form id="messages_form" enctype="multipart/form-data" action="/analyzer" method="post">
+                <input id="fileinput" class="btn btn-lg btn-success" type="file" name="html">
             </form>
         </div>
 
