@@ -1,27 +1,4 @@
-var express = require('express');
-var router = express.Router();
-var $ = require('jquery')(require("jsdom").jsdom().parentWindow);
-var fs = require('fs');
-var multer = require("multer");
-var upload = multer({ dest: 'uploads/' });
-
-router.post('/', upload.single("html"), function(request, response) {
-    response.render('pages/analyzer', {
-        filePath: request.file.path
-    });
-});
-
-router.get('/data', function(request, response) {
-    var htmlFile = __dirname + "/../" + request.query.file;
-
-    fs.readFile(htmlFile, 'utf-8', function(err, html) {
-        fs.unlink(htmlFile);
-        var data = process(html);
-        response.send(JSON.stringify(data));
-    });
-});
-
-module.exports = router;
+console.log("Loaded analyzer!");
 
 function process(html) {
 

@@ -35,16 +35,88 @@
         .center {
             text-align: center;
         }
-
         input[type="file"] {
             display: none;
+        }
+        #datepicker-center {
+            display: inline-block;
+            margin: 0 auto;
         }
     </style>
 
     <script>
         $(function() {
+            var nameDateMap;
+            var nameCount;
+
+            $("#name").hide();
+            $("#retry").hide();
+
+            $.ajax({
+                url: "/scripts/analyzer.js",
+                dataType: "script",
+                success: ""
+            });
+
             $('#fileinput').change(function() {
-                $('#messages_form').submit();
+                $("#browse").hide();
+                $("#retry").show();
+                $("#retry").text("Loading...");
+
+                var htmlFile = $('#fileinput')[0].files[0];
+
+                var reader = new FileReader();
+
+                reader.onload = function(event) {
+                    var data = process(event.target.result);
+
+                    nameDateMap = data.nameDateMap;
+                    nameCount = data.nameCount;
+
+                    var names = Object.keys(nameCount).sort(function(a, b) {
+                        return nameCount[b] - nameCount[a];
+                    });
+
+                    $.each(names, function(a, b) {
+                        $("#name").append($("<option/>").attr("value", b).text(b +
+                                " (" + nameCount[b] + ")"));
+                    });
+
+                    $("#name").show();
+                    $("#retry").text("Reset!");
+                }
+
+                reader.readAsText(htmlFile);
+            });
+
+            $("#retry").on("click", function(e) {
+                $("#name").hide();
+                $("#datepicker").datepicker("destroy");
+                $("#retry").hide();
+                $("#browse").show();
+            });
+
+            $("#name").on("change", function(e) {
+                var name = $("#name").val();
+
+                $("#datepicker").datepicker("destroy");
+                $("#messages").html("");
+
+                $("#datepicker").datepicker({
+                    beforeShowDay: function(date) {
+                        if (nameDateMap[name][date])
+                            return [true, 'event', ''];
+                        else
+                            return [true, '', ''];
+                    },
+                    onSelect: function(dateText, inst) {
+                        $("#messages").html("");
+                        var messages = nameDateMap[name][new Date(dateText)];
+                        messages.slice().reverse().forEach(function(message) {
+                            $("#messages").append($("<tr><td>" + name + "</td><td>" + message + "</td></tr>"));
+                        });
+                    }
+                });
             });
         });
     </script>
@@ -58,11 +130,29 @@
         <h1>Message Analyzer</h1>
         <br />
         <div class="center">
-            <p><label for="fileinput" class="btn btn-lg btn-success" role="button">Select your 'messages.htm'!</label></p>
+            <p><label id="browse" for="fileinput" class="btn btn-lg btn-success" role="button">Select your 'messages.htm'!</label></p>
+            <p><label id="retry" class="btn btn-lg btn-success" role="button"></label></p>
 
-            <form id="messages_form" enctype="multipart/form-data" action="/analyzer" method="post">
-                <input id="fileinput" class="btn btn-lg btn-success" type="file" name="html">
-            </form>
+            <!-- Create a div which will be the canvasloader wrapper -->
+            <div id="canvasloader-container" class="wrapper"></div>
+
+            <input id="fileinput" class="btn btn-lg btn-success" type="file" name="html">
+        </div>
+
+        <div class="center row">
+            <div class="col-lg-12">
+                <div>
+                    <select id="name"></select>
+                </div>
+
+                <br />
+
+                <div id="datepicker-center">
+                    <div id="datepicker"></div>
+                </div>
+
+                <table class="table" id="messages"></table>
+            </div>
         </div>
 
     </div>
