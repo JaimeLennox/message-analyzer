@@ -58,6 +58,45 @@
                 success: ""
             });
 
+            $("#retry").on("click", function(e) {
+                $("#name").hide();
+                $("#datepicker").datepicker("destroy");
+                $("#retry").hide();
+                $("#browse").show();
+            });
+
+            $("#name").on("change", function(e) {
+                var name = $("#name").val();
+
+                $("#datepicker").datepicker("destroy");
+                $("#messages").html("");
+
+                $("#datepicker").datepicker({
+                    oldDateText: "",
+                    beforeShowDay: function(date) {
+                        if (nameDateMap[name][date])
+                            return [true, 'event', ''];
+                        else
+                            return [true, '', ''];
+                    },
+                    onSelect: function(dateText, inst) {
+                        if (this.oldDateText === dateText && $("#messages").is(":visible")) {
+                            $("#messages").hide();
+                        } else {
+                            $("#messages").show();
+                        }
+
+                        this.oldDateText = dateText;
+
+                        $("#messages").html("");
+                        var messages = nameDateMap[name][new Date(dateText)];
+                        messages.slice().reverse().forEach(function(message) {
+                            $("#messages").append($("<tr><td>" + name + "</td><td>" + message + "</td></tr>"));
+                        });
+                    }
+                });
+            });
+
             $('#fileinput').change(function() {
                 $("#browse").hide();
                 $("#retry").show();
@@ -82,41 +121,12 @@
                                 " (" + nameCount[b] + ")"));
                     });
 
-                    $("#name").show();
                     $("#retry").text("Reset!");
+                    $("#name").show();
+                    $('#name').change();
                 }
 
                 reader.readAsText(htmlFile);
-            });
-
-            $("#retry").on("click", function(e) {
-                $("#name").hide();
-                $("#datepicker").datepicker("destroy");
-                $("#retry").hide();
-                $("#browse").show();
-            });
-
-            $("#name").on("change", function(e) {
-                var name = $("#name").val();
-
-                $("#datepicker").datepicker("destroy");
-                $("#messages").html("");
-
-                $("#datepicker").datepicker({
-                    beforeShowDay: function(date) {
-                        if (nameDateMap[name][date])
-                            return [true, 'event', ''];
-                        else
-                            return [true, '', ''];
-                    },
-                    onSelect: function(dateText, inst) {
-                        $("#messages").html("");
-                        var messages = nameDateMap[name][new Date(dateText)];
-                        messages.slice().reverse().forEach(function(message) {
-                            $("#messages").append($("<tr><td>" + name + "</td><td>" + message + "</td></tr>"));
-                        });
-                    }
-                });
             });
         });
     </script>
