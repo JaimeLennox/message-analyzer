@@ -49,7 +49,7 @@
             retry.on("click", function(e) {
                 $("#analysis").hide();
                 $("#datepicker").datepicker("destroy");
-                name$("#retry").hide();
+                $("#retry").hide();
                 $("#browse").show();
             });
 
@@ -120,6 +120,8 @@
                 }
 
                 reader.readAsText(htmlFile);
+
+                $(this).val("");
             });
         });
     </script>
