@@ -13,3 +13,12 @@ input[type="file"] {
     display: inline-block;
     margin: 0 auto;
 }
+
+table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+td {
+    word-wrap: break-word;
+}
