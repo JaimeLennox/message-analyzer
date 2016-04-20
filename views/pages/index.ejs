@@ -91,7 +91,6 @@
 
             $('#fileinput').change(function() {
                 $("#browse").hide();
-                $("#analysis").show();
                 retry.show();
                 retry.text("Loading...");
 
@@ -116,6 +115,7 @@
 
                     retry.text("Reset!");
                     name.show();
+                    $("#analysis").show();
                     name.change();
                 }
 
