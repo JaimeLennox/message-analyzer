@@ -93,7 +93,7 @@
                         threadNames.forEach(function(threadName) {
                             var messageObjects = threadDateMap[threadName][currentDate];
 
-                            var table = $("<br /><table><th>" + threadName + "</th></table>");
+                            var table = $("<br /><table class=\"table\"><th colspan=\"2\">" + threadName + "</th></table>");
 
                             messageObjects.slice().forEach(function(messageObject) {
                                 table.append($("<tr><td>" + messageObject.name + "</td><td>" + messageObject.message + "</td></tr>"));
@@ -172,8 +172,7 @@
                     <div id="datepicker"></div>
                 </div>
 
-                <div id="tables"</div>
-                <table class="table" id="messages"></table>
+                <div id="tables"></div>
             </div>
         </div>
 
