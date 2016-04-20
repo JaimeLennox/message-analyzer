@@ -9,11 +9,17 @@ function process(html) {
     }
 
     var nameDateMap = {};
+    var threadNameDateMap = {};
+    var nameCount = {};
+    
     var elements = $(html);
 
     $(elements).find(".thread").each(function(i, e) {
         var messageName;
         var messageDate;
+
+        var threadName = $($(e)[0].firstChild).text();
+        threadNameDateMap[threadName] = {};
 
         $(e).children().each(function(ind, elem) {
             var current = $(elem);
@@ -29,6 +35,12 @@ function process(html) {
                 // message
                 var messageText = current.text();
 
+                if (!nameCount[messageName]) {
+                    nameCount[messageName] = 0;
+                }
+
+                nameCount[messageName] += 1;
+
                 if (!nameDateMap[messageName]) {
                     nameDateMap[messageName] = {};
                 }
@@ -37,19 +49,18 @@ function process(html) {
                     nameDateMap[messageName][messageDate] = [];
                 }
 
-                nameDateMap[messageName][messageDate].push(messageText);
+                if (nameDateMap[messageName][messageDate].indexOf(threadName) === -1) {
+                    nameDateMap[messageName][messageDate].push(threadName);
+                }
+
+                if (!threadNameDateMap[threadName][messageDate]) {
+                    threadNameDateMap[threadName][messageDate] = [];
+                }
+
+                threadNameDateMap[threadName][messageDate].unshift({ name: messageName, message: messageText });
             }
         })
     });
 
-    var nameCount = {};
-
-    for (name in nameDateMap) {
-        for (nameDate in nameDateMap[name]) {
-            if (!nameCount[name]) nameCount[name] = 0;
-            nameCount[name] += nameDateMap[name][nameDate].length;
-        }
-    }
-
-    return {nameDateMap: nameDateMap, nameCount: nameCount}
+    return {nameDateMap: nameDateMap, threadDateMap: threadNameDateMap, nameCount: nameCount}
 }

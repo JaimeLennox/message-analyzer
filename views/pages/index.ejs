@@ -32,6 +32,7 @@
     <script>
         $(function() {
             var nameDateMap;
+            var threadDateMap;
             var nameCount;
 
             var name = $("#name");
@@ -56,10 +57,10 @@
             name.on("change", function(e) {
                 var nameVal = $("#name").val();
                 var datePicker = $("#datepicker");
-                var messages = $("#messages");
+                var tables = $("#tables");
 
                 datePicker.datepicker("destroy");
-                messages.html("");
+                tables.html("");
 
                 datePicker.datepicker({
                     oldDateText: "",
@@ -70,21 +71,37 @@
                             return [true, '', ''];
                     },
                     onSelect: function(dateText, inst) {
-                        var messages = $("#messages");
+                        var tables = $("#tables");
 
-                        if (this.oldDateText === dateText && messages.is(":visible")) {
-                            messages.hide();
+                        if (this.oldDateText === dateText && tables.is(":visible")) {
+                            tables.hide();
                         } else {
-                            messages.show();
+                            tables.show();
                         }
 
                         this.oldDateText = dateText;
 
-                        messages.html("");
-                        var messageText = nameDateMap[nameVal][new Date(dateText)];
-                        messageText.slice().reverse().forEach(function(message) {
-                            $("#messages").append($("<tr><td>" + nameVal + "</td><td>" + message + "</td></tr>"));
+                        tables.html("");
+
+                        var currentDate = new Date(dateText);
+                        var threadNames = nameDateMap[nameVal][currentDate];
+
+                        threadNames.filter(function(threadName) {
+                            return ~threadName.indexOf(nameVal);
                         });
+
+                        threadNames.forEach(function(threadName) {
+                            var messageObjects = threadDateMap[threadName][currentDate];
+
+                            var table = $("<br /><table><th>" + threadName + "</th></table>");
+
+                            messageObjects.slice().forEach(function(messageObject) {
+                                table.append($("<tr><td>" + messageObject.name + "</td><td>" + messageObject.message + "</td></tr>"));
+                            });
+
+                            tables.append(table);
+                        });
+
                     }
                 });
             });
@@ -102,6 +119,7 @@
                     var data = process(event.target.result);
 
                     nameDateMap = data.nameDateMap;
+                    threadDateMap = data.threadDateMap;
                     nameCount = data.nameCount;
 
                     var names = Object.keys(nameCount).sort(function(a, b) {
@@ -154,6 +172,7 @@
                     <div id="datepicker"></div>
                 </div>
 
+                <div id="tables"</div>
                 <table class="table" id="messages"></table>
             </div>
         </div>
