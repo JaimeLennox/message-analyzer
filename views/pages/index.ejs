@@ -15,6 +15,7 @@
 
     <!-- Custom styles for this template -->
     <link href="/stylesheets/jumbotron-narrow.css" rel="stylesheet">
+    <link href="/stylesheets/custom.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -22,35 +23,22 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
-    <style>
-        .event a {
-            background-color: #42B373 !important;
-            background-image :none !important;
-            color: #ffffff !important;
-        }
-        .center {
-            text-align: center;
-        }
-        input[type="file"] {
-            display: none;
-        }
-        #datepicker-center {
-            display: inline-block;
-            margin: 0 auto;
-        }
-    </style>
 
     <script>
         $(function() {
             var nameDateMap;
             var nameCount;
 
-            $("#name").hide();
-            $("#retry").hide();
+            var name = $("#name");
+            var retry = $("#retry");
+
+            retry.hide();
+            $("#analysis").hide();
 
             $.ajax({
                 url: "/scripts/analyzer.js",
@@ -58,40 +46,44 @@
                 success: ""
             });
 
-            $("#retry").on("click", function(e) {
-                $("#name").hide();
+            retry.on("click", function(e) {
+                $("#analysis").hide();
                 $("#datepicker").datepicker("destroy");
-                $("#retry").hide();
+                name$("#retry").hide();
                 $("#browse").show();
             });
 
-            $("#name").on("change", function(e) {
-                var name = $("#name").val();
+            name.on("change", function(e) {
+                var nameVal = $("#name").val();
+                var datePicker = $("#datepicker");
+                var messages = $("#messages");
 
-                $("#datepicker").datepicker("destroy");
-                $("#messages").html("");
+                datePicker.datepicker("destroy");
+                messages.html("");
 
-                $("#datepicker").datepicker({
+                datePicker.datepicker({
                     oldDateText: "",
                     beforeShowDay: function(date) {
-                        if (nameDateMap[name][date])
+                        if (nameDateMap[nameVal][date])
                             return [true, 'event', ''];
                         else
                             return [true, '', ''];
                     },
                     onSelect: function(dateText, inst) {
-                        if (this.oldDateText === dateText && $("#messages").is(":visible")) {
-                            $("#messages").hide();
+                        var messages = $("#messages");
+
+                        if (this.oldDateText === dateText && messages.is(":visible")) {
+                            messages.hide();
                         } else {
-                            $("#messages").show();
+                            messages.show();
                         }
 
                         this.oldDateText = dateText;
 
-                        $("#messages").html("");
-                        var messages = nameDateMap[name][new Date(dateText)];
-                        messages.slice().reverse().forEach(function(message) {
-                            $("#messages").append($("<tr><td>" + name + "</td><td>" + message + "</td></tr>"));
+                        messages.html("");
+                        var messageText = nameDateMap[nameVal][new Date(dateText)];
+                        messageText.slice().reverse().forEach(function(message) {
+                            $("#messages").append($("<tr><td>" + nameVal + "</td><td>" + message + "</td></tr>"));
                         });
                     }
                 });
@@ -99,8 +91,9 @@
 
             $('#fileinput').change(function() {
                 $("#browse").hide();
-                $("#retry").show();
-                $("#retry").text("Loading...");
+                $("#analysis").show();
+                retry.show();
+                retry.text("Loading...");
 
                 var htmlFile = $('#fileinput')[0].files[0];
 
@@ -117,13 +110,13 @@
                     });
 
                     $.each(names, function(a, b) {
-                        $("#name").append($("<option/>").attr("value", b).text(b +
+                        name.append($("<option/>").attr("value", b).text(b +
                                 " (" + nameCount[b] + ")"));
                     });
 
-                    $("#retry").text("Reset!");
-                    $("#name").show();
-                    $('#name').change();
+                    retry.text("Reset!");
+                    name.show();
+                    name.change();
                 }
 
                 reader.readAsText(htmlFile);
@@ -140,16 +133,14 @@
         <h1>Message Analyzer</h1>
         <br />
         <div class="center">
+            <br />
             <p><label id="browse" for="fileinput" class="btn btn-lg btn-success" role="button">Select your 'messages.htm'!</label></p>
             <p><label id="retry" class="btn btn-lg btn-success" role="button"></label></p>
-
-            <!-- Create a div which will be the canvasloader wrapper -->
-            <div id="canvasloader-container" class="wrapper"></div>
 
             <input id="fileinput" class="btn btn-lg btn-success" type="file" name="html">
         </div>
 
-        <div class="center row">
+        <div id="analysis" class="center row">
             <div class="col-lg-12">
                 <div>
                     <select id="name"></select>

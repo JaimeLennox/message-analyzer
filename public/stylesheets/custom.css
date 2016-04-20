@@ -1,0 +1,15 @@
+.event a {
+    background-color: #42B373 !important;
+    background-image :none !important;
+    color: #ffffff !important;
+}
+.center {
+    text-align: center;
+}
+input[type="file"] {
+    display: none;
+}
+#datepicker-center {
+    display: inline-block;
+    margin: 0 auto;
+}
