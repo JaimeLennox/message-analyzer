@@ -28,6 +28,8 @@
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
+    <script src="/scripts/bootstrap.min.js"></script>
+    <script src="/scripts/main.js"></script>
 
     <script>
         $(function() {
@@ -40,12 +42,6 @@
 
             retry.hide();
             $("#analysis").hide();
-
-            $.ajax({
-                url: "/scripts/analyzer.js",
-                dataType: "script",
-                success: ""
-            });
 
             retry.on("click", function(e) {
                 $("#analysis").hide();
@@ -104,6 +100,8 @@
 
                     }
                 });
+
+
             });
 
             $('#fileinput').change(function() {
@@ -168,11 +166,25 @@
 
                 <br />
 
-                <div id="datepicker-center">
-                    <div id="datepicker"></div>
-                </div>
+                <ul class="nav nav-tabs centered" role="tablist">
+                    <li role="presentation" class="active"><a href="#calendar" aria-controls="calendar" role="tab" data-toggle="tab">Calendar</a></li>
+                    <li role="presentation"><a href="#wordcloud" aria-controls="wordcloud" role="tab" data-toggle="tab">Word Cloud</a></li>
+                </ul>
 
-                <div id="tables"></div>
+                <br />
+
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="calendar">
+                        <div id="datepicker-center">
+                            <div id="datepicker"></div>
+                        </div>
+
+                        <div id="tables"></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="wordcloud">
+                        <p>test</p>
+                    </div>
+                </div>
             </div>
         </div>
 
