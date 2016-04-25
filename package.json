@@ -4,7 +4,7 @@
   "description": "A sample Node.js app using Express 4",
   "main": "app.js",
   "scripts": {
-    "postinstall": "browserify public/scripts/analyzer.js public/scripts/wordcloud.js -o public/scripts/main.js",
+    "postinstall": "browserify public/scripts/analyzer.js public/scripts/client.js public/scripts/wordcloud.js -o public/scripts/main.js",
     "start": "node app.js"
   },
   "dependencies": {
