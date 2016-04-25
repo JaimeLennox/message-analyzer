@@ -11,6 +11,7 @@ var analyzer = {
         var nameDateMap = {};
         var threadNameDateMap = {};
         var nameCount = {};
+        var nameMessageMap = {};
 
         var elements = $(html);
 
@@ -40,6 +41,12 @@ var analyzer = {
                     }
 
                     nameCount[messageName] += 1;
+                    
+                    if (!nameMessageMap[messageName]) {
+                        nameMessageMap[messageName] = [];
+                    }
+                    
+                    nameMessageMap[messageName].push(messageText);
 
                     if (!nameDateMap[messageName]) {
                         nameDateMap[messageName] = {};
@@ -62,7 +69,7 @@ var analyzer = {
             })
         });
 
-        return {nameDateMap: nameDateMap, threadDateMap: threadNameDateMap, nameCount: nameCount}
+        return {nameDateMap: nameDateMap, threadDateMap: threadNameDateMap, nameCount: nameCount, nameMessageMap: nameMessageMap}
     }
 };
 
