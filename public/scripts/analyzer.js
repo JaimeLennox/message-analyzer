@@ -3,9 +3,7 @@ var analyzer = {
     process: function(html) {
 
         function parseDate(messageDate) {
-            var splitDate = messageDate.split(",");
-            var year = splitDate[2].substring(0, 5);
-            return splitDate[1].substring(1, splitDate[1].length) + "," + year;
+            return messsageDate.split(" at ").join(" "); 
         }
 
         var nameDateMap = {};
