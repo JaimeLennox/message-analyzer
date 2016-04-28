@@ -3,7 +3,7 @@ var analyzer = {
     process: function(html) {
 
         function parseDate(messageDate) {
-            return messsageDate.split(" at ").join(" "); 
+            return messageDate.split(" at ").join(" "); 
         }
 
         var nameDateMap = {};
