@@ -55,8 +55,6 @@ var wordcloud = {
             freq[word]++;
         });
 
-        console.log(freq);
-
         list = [];
         $.each(freq, function(key, value) {
             if (value >= 5 && stopWords.indexOf(key) === -1) {
@@ -64,10 +62,15 @@ var wordcloud = {
             }
         });
 
-        $("#wordcloud").html("");
-
+        var parent = $(".tab-content");
+        var wordcloudPanel = $("#wordcloud");
         var canvas = document.createElement('canvas');
-        $("#wordcloud").append(canvas);
+
+        canvas.height = parent.height();
+        canvas.width = parent.width();
+
+        wordcloudPanel.html("");
+        wordcloudPanel.append(canvas);
 
         WordCloud(canvas, { list: list });
     }
