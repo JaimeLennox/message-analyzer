@@ -37,7 +37,11 @@ var stopWords = ['january', 'february', 'march', 'april', 'may', 'june', 'july',
     'than', 'too', 'very', 'one', 'every', 'least', 'less', 'many', 'now', 'ever', 'never', 'say', 'says', 'said',
     'also', 'get', 'go', 'goes', 'just', 'made', 'make', 'put', 'see', 'seen', 'whether', 'like', 'well', 'back',
     'even', 'still', 'way', 'take', 'since', 'another', 'however', 'two', 'three', 'four', 'five', 'first', 'second',
-    'new', 'old', 'high', 'long', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+    'new', 'old', 'high', 'long'];
+
+function validWord(word, count) {
+    return count >= 5 && stopWords.indexOf(word) === -1 && isNaN(word)
+}
 
 var wordcloud = {
     create: function(words) {
@@ -56,9 +60,9 @@ var wordcloud = {
         });
 
         list = [];
-        $.each(freq, function(key, value) {
-            if (value >= 5 && stopWords.indexOf(key) === -1) {
-                list.push([key, value]);
+        $.each(freq, function(word, count) {
+            if (validWord(word, count)) {
+                list.push([word, count]);
             }
         });
 
