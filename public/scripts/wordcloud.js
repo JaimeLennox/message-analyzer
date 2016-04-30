@@ -45,7 +45,7 @@ function validWord(word, count) {
 
 var wordcloud = {
     create: function(words) {
-        freq = {};
+        var freq = {};
 
         words.forEach(function(word) {
             if (word.indexOf(':') === -1) {
@@ -59,7 +59,7 @@ var wordcloud = {
             freq[word]++;
         });
 
-        list = [];
+        var list = [];
         $.each(freq, function(word, count) {
             if (validWord(word, count)) {
                 list.push([word, count]);
